@@ -12,7 +12,8 @@ defmodule Later do
   Registers a function to be invoked at specified time.
 
   First argument accepts either a MFA argument or a function,
-  while the second argument accepts a list of options as follows:
+  while the second argument either an integer in milliseconds
+  or a list of options as follows:
 
     * `:after`
     * `:at`
@@ -39,12 +40,20 @@ defmodule Later do
   Specifies how many times the function will be invoked in case of failure,
   before it is discarded from the queue. Default is 0
   """
+  def add({mod, fun, args}, delay) when is_integer(delay) do
+    add({mod, fun, args}, [after: delay])
+  end
+
+  def add(fun, delay) when is_integer(delay) do
+    add(fun, [after: delay])
+  end
+
   def add({mod, fun, args}, _opts) do
     apply(mod, fun, args)
   end
 
-  def add(func, _opts) do
-    func.()
+  def add(fun, _opts) do
+    fun.()
   end
 
   @doc """
@@ -53,10 +62,8 @@ defmodule Later do
   This will do a simple search for a matching MFA and remove the most
   recent result from the queue. Be careful when using this function
   as it may have unintended consequences
-
-  Similar to `:add/2`
   """
-  def remove({mod, fun, args}, _period) do
+  def remove({mod, fun, args}) do
     apply(mod, fun, args)
   end
 

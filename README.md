@@ -17,19 +17,19 @@ end
 You can run a process after a few milliseconds:
 
 ```
-Later.af(MyModule.do_something(a, b), 10_000)
+Later.add(MyModule.do_something(a, b), 10_000)
 ```
 
 or, if you prefer the MFA structure:
 
 ```
-Later.af({MyModule, :do_something, [a, b]}, 10_000)
+Later.add({MyModule, :do_something, [a, b]}, 10_000)
 ```
 
 The default unit is millisecond, but you can also use `:second`, `:minute`, `:hour`, and `:day`
 
 ```
-Later.af(MyModule.do_something(a, b), 10, :hour)
+Later.add(MyModule.do_something(a, b), [after: 10, unit: :hour])
 ```
 
 Sometimes, you might want to run a process at a specific time in the future:
@@ -43,7 +43,7 @@ time =
   |> DateTime.from_unix!()
   |> Map.merge(%{hour: 20, minute: 0})
 
-Later.at({MyModule, :do_something, []}, time)
+Later.at({MyModule, :do_something, []}, [at: time])
 ```
 
 *Note:* At the time, Later only support `DateTime` value.
